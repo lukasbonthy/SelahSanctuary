@@ -10,6 +10,7 @@
 <body class="min-h-screen">
   <div class="px-3 sm:px-6 lg:px-8 py-5">
     <div class="max-w-7xl mx-auto">
+
       <!-- top bar -->
       <div class="glass rounded-3xl p-4 sm:p-5 noise relative overflow-hidden">
         <div class="flex items-center justify-between gap-3">
@@ -24,9 +25,6 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <a href="/walk" class="hidden sm:inline-flex pressy rounded-2xl px-3 py-2 bg-white/5 hover:bg-white/8 border border-white/10 transition font-semibold">
-              Walk
-            </a>
             <div class="hidden md:flex items-center gap-2 rounded-2xl bg-white/5 border border-white/10 px-3 py-2">
               <span class="text-white/50">⌕</span>
               <input class="bg-transparent outline-none text-sm text-white/80 placeholder:text-white/35 w-52" placeholder="Search (UI)" />
@@ -38,11 +36,22 @@
         </div>
       </div>
 
-      <!-- layout -->
       <div class="mt-4 grid grid-cols-12 gap-4 lg:gap-6">
-        <!-- left channels (UI) -->
-        <aside class="col-span-12 lg:col-span-3 glass rounded-3xl p-4 noise relative overflow-hidden">
+
+        <!-- server rail (discord vibe UI) -->
+        <aside class="col-span-12 lg:col-span-1 glass rounded-3xl p-3 noise relative overflow-hidden">
+          <div class="flex lg:flex-col gap-2 items-center justify-center">
+            <div class="w-12 h-12 rounded-3xl glass-soft glow-ring grid place-items-center">✦</div>
+            <div class="w-12 h-12 rounded-3xl bg-white/5 border border-white/10 grid place-items-center text-white/80">🔥</div>
+            <div class="w-12 h-12 rounded-3xl bg-white/5 border border-white/10 grid place-items-center text-white/80">🌿</div>
+            <div class="w-12 h-12 rounded-3xl bg-white/5 border border-white/10 grid place-items-center text-white/80">📖</div>
+          </div>
+        </aside>
+
+        <!-- left channels + voice -->
+        <aside class="col-span-12 lg:col-span-3 glass rounded-3xl p-4 noise relative overflow-hidden flex flex-col">
           <div class="text-sm text-white/60">Channels</div>
+
           <div class="mt-3 space-y-2 text-sm">
             <button class="w-full text-left pressy px-4 py-3 rounded-2xl bg-white/6 border border-white/10"># chat</button>
             <button class="w-full text-left pressy px-4 py-3 rounded-2xl bg-white/4 hover:bg-white/6 border border-white/10 transition text-white/75"># prayer</button>
@@ -51,27 +60,54 @@
 
           <div class="mt-5 neon-divider"></div>
 
-          <div class="mt-5 glass-soft rounded-3xl p-4">
-            <div class="text-sm font-semibold">Now Talking</div>
-            <div class="text-sm text-white/60 mt-1">UI only • voice panel</div>
+          <div class="mt-5 flex items-center justify-between">
+            <div class="text-sm text-white/60">Voice Channels</div>
+            <div class="text-xs text-white/50">WebRTC</div>
+          </div>
 
-            <div class="mt-3 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-white/6 border border-white/10 grid place-items-center">🎧</div>
-              <div class="min-w-0">
-                <div class="font-semibold truncate">Peace Channel</div>
-                <div class="text-xs text-white/55">0 speaking • 0 listening</div>
+          <div id="voiceChannels" class="mt-3 space-y-2"></div>
+
+          <div class="mt-5 neon-divider"></div>
+
+          <!-- Voice connected panel (discord style) -->
+          <div class="mt-auto glass-soft rounded-3xl p-4 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-60 pointer-events-none"
+              style="background: radial-gradient(500px 180px at 10% 10%, rgba(56,189,248,.18), transparent 60%),
+                             radial-gradient(500px 180px at 90% 20%, rgba(244,114,182,.12), transparent 60%);"></div>
+
+            <div class="relative">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-xs text-white/55">Voice</div>
+                  <div id="voiceStatus" class="font-semibold tracking-tight mt-1">Not connected</div>
+                  <div id="voiceHint" class="text-xs text-white/55 mt-1">Pick a channel above.</div>
+                </div>
+                <div id="voiceDot" class="w-2.5 h-2.5 rounded-full bg-white/20 mt-2"></div>
               </div>
-            </div>
 
-            <div class="mt-3 grid grid-cols-2 gap-2">
-              <button class="pressy rounded-2xl px-3 py-2 bg-white/6 hover:bg-white/8 border border-white/10 transition font-semibold text-sm">Join</button>
-              <button class="pressy rounded-2xl px-3 py-2 bg-white/5 hover:bg-white/7 border border-white/10 transition text-white/80 text-sm">Mute</button>
+              <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+                <button id="btnMute" class="pressy rounded-2xl px-3 py-2 bg-white/6 hover:bg-white/8 border border-white/10 transition font-semibold">
+                  🎙 Mute
+                </button>
+                <button id="btnDeafen" class="pressy rounded-2xl px-3 py-2 bg-white/6 hover:bg-white/8 border border-white/10 transition font-semibold">
+                  🎧 Deafen
+                </button>
+                <button id="btnLeaveVoice" class="pressy rounded-2xl px-3 py-2 bg-rose-400/10 hover:bg-rose-400/14 border border-rose-300/15 transition font-semibold text-rose-100">
+                  Leave
+                </button>
+              </div>
+
+              <div class="mt-3 text-xs text-white/55">
+                <span class="text-white/70 font-semibold" id="meMiniName">You</span>
+                <span class="opacity-70">•</span>
+                <span id="meMiniBadge">✨ Seeker</span>
+              </div>
             </div>
           </div>
         </aside>
 
         <!-- center chat -->
-        <main class="col-span-12 lg:col-span-6">
+        <main class="col-span-12 lg:col-span-5">
           <div class="glass rounded-3xl noise relative overflow-hidden">
             <div class="p-4 sm:p-5 border-b border-white/10">
               <div class="flex items-center justify-between">
@@ -103,20 +139,24 @@
           </div>
         </main>
 
-        <!-- right users -->
-        <aside class="col-span-12 lg:col-span-3 glass rounded-3xl p-4 noise relative overflow-hidden">
-          <div class="flex items-center justify-between">
-            <div class="text-sm text-white/60">Online</div>
-            <div class="text-xs text-white/55">live</div>
+        <!-- right: online + voice participants -->
+        <aside class="col-span-12 lg:col-span-3 space-y-4">
+          <div class="glass rounded-3xl p-4 noise relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-white/60">Online</div>
+              <div class="text-xs text-white/55">live</div>
+            </div>
+            <div id="users" class="mt-3 space-y-2 max-h-[40vh] overflow-y-auto pr-1"></div>
           </div>
 
-          <div id="users" class="mt-3 space-y-2 max-h-[70vh] overflow-y-auto pr-1"></div>
-
-          <div class="mt-4 neon-divider"></div>
-
-          <a href="/walk" class="mt-4 block pressy rounded-3xl px-4 py-4 glass-soft shimmer glow-ring font-semibold text-center">
-            Go to Sanctuary Walk
-          </a>
+          <div class="glass rounded-3xl p-4 noise relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-white/60">In Voice</div>
+              <div id="voiceCountMini" class="text-xs text-white/55">0</div>
+            </div>
+            <div class="mt-3 text-xs text-white/55" id="voicePeopleHint">Join a voice channel to see members.</div>
+            <div id="voicePeople" class="mt-3 space-y-2 max-h-[32vh] overflow-y-auto pr-1"></div>
+          </div>
         </aside>
       </div>
     </div>
@@ -125,6 +165,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="/app.js"></script>
   <script src="/ui.js"></script>
+  <script src="/voice.js"></script>
   <script src="/chat.js"></script>
 </body>
 </html>
