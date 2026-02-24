@@ -22,9 +22,6 @@
         </a>
 
         <div class="flex items-center gap-2">
-          <a href="/walk" class="hidden sm:inline-flex pressy rounded-2xl px-4 py-2 bg-white/5 hover:bg-white/8 border border-white/10 transition font-semibold">
-            Sanctuary Walk
-          </a>
           <a href="/login" class="pressy rounded-2xl px-4 py-2 glass-soft shimmer glow-ring font-semibold">
             Switch Name
           </a>
@@ -32,7 +29,6 @@
       </div>
 
       <div class="mt-6 grid grid-cols-12 gap-4 lg:gap-6">
-        <!-- Left nav -->
         <aside class="col-span-12 lg:col-span-3 glass rounded-3xl p-4 sm:p-5 noise relative overflow-hidden">
           <div class="text-sm text-white/60">You</div>
           <div class="mt-2 flex items-center gap-3">
@@ -49,10 +45,6 @@
             <a class="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/6 border border-white/10">
               <span>🏛 Lobby</span>
               <span class="text-white/50">•</span>
-            </a>
-            <a href="/walk" class="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/4 hover:bg-white/6 border border-white/10 transition">
-              <span>🚶 Sanctuary Walk</span>
-              <span class="text-white/50">⌁</span>
             </a>
             <a href="/" class="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/4 hover:bg-white/6 border border-white/10 transition">
               <span>✨ Landing</span>
@@ -71,18 +63,13 @@
           </div>
         </aside>
 
-        <!-- Center rooms -->
         <main class="col-span-12 lg:col-span-6">
           <div class="glass rounded-3xl p-5 noise relative overflow-hidden">
             <div class="flex items-start justify-between gap-4">
               <div>
                 <div class="text-sm text-white/60">Rooms</div>
                 <div class="text-2xl font-semibold tracking-tight mt-1">Choose your sanctuary</div>
-                <div class="text-white/65 mt-2">Live online counts update in real-time.</div>
-              </div>
-              <div class="hidden sm:block text-right">
-                <div class="text-xs text-white/55">Tip</div>
-                <div class="text-sm text-white/70">Hover a card → glow ✨</div>
+                <div class="text-white/65 mt-2">Voice counts show who’s in voice channels.</div>
               </div>
             </div>
 
@@ -90,50 +77,18 @@
           </div>
         </main>
 
-        <!-- Right: Now Talking + activity -->
         <aside class="col-span-12 lg:col-span-3 space-y-4">
-          <div class="glass rounded-3xl p-5 noise relative overflow-hidden">
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="text-sm text-white/60">Now Talking</div>
-                <div class="font-semibold tracking-tight mt-1">Fireside Voice</div>
-              </div>
-              <div class="px-3 py-1.5 rounded-full bg-emerald-400/10 border border-emerald-300/20 text-emerald-200 text-xs">
-                UI only
-              </div>
-            </div>
-
-            <div class="mt-4 glass-soft rounded-3xl p-4">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-white/6 border border-white/10 grid place-items-center">🎙️</div>
-                <div class="min-w-0">
-                  <div class="font-semibold truncate">Open Mic Lounge</div>
-                  <div class="text-sm text-white/60">0 speaking • 0 listening</div>
-                </div>
-              </div>
-
-              <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
-                <button class="pressy rounded-2xl px-3 py-2 bg-white/6 hover:bg-white/8 border border-white/10 transition font-semibold">
-                  Join
-                </button>
-                <button class="pressy rounded-2xl px-3 py-2 bg-white/5 hover:bg-white/7 border border-white/10 transition text-white/80">
-                  Mute
-                </button>
-              </div>
-
-              <div class="mt-4 flex items-center gap-2">
-                <div class="h-2 flex-1 rounded-full bg-white/8 overflow-hidden">
-                  <div class="h-full w-[38%] bg-gradient-to-r from-sky-400/60 via-fuchsia-400/50 to-violet-400/50"></div>
-                </div>
-                <div class="text-xs text-white/55">signal</div>
-              </div>
-            </div>
-          </div>
-
           <div class="glass rounded-3xl p-5 noise relative overflow-hidden">
             <div class="text-sm text-white/60">Activity</div>
             <div class="mt-2 text-sm text-white/70" id="activity">
               Listening for updates…
+            </div>
+          </div>
+
+          <div class="glass rounded-3xl p-5 noise relative overflow-hidden">
+            <div class="text-sm text-white/60">Voice tip</div>
+            <div class="mt-2 text-sm text-white/70">
+              Join a room → pick a voice channel → allow mic 🎧
             </div>
           </div>
         </aside>
