@@ -9,16 +9,14 @@ const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
-// ---------- Static + friendly routes ----------
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 app.get("/lobby", (req, res) => res.sendFile(path.join(__dirname, "public", "lobby.html")));
 app.get("/chat", (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
-app.get("/walk", (req, res) => res.sendFile(path.join(__dirname, "public", "walk.html")));
 
-// ---------- In-memory state ----------
+// --------- State (in-memory) ----------
 const DEFAULT_ROOMS = [
   { id: "fireside", name: "Fireside Lounge", desc: "Warm, calm conversation + prayer requests." },
   { id: "garden", name: "Prayer Garden", desc: "Quiet, supportive chat. Slow mode vibes." },
@@ -26,16 +24,24 @@ const DEFAULT_ROOMS = [
   { id: "youth", name: "Youth Hangout", desc: "Chill talk, school life, encouragement." }
 ];
 
-const rooms = new Map(); // roomId -> { id, name, desc, users:Set(socketId), messages:[], typing:Set(socketId) }
+const DEFAULT_VOICE_CHANNELS = [
+  { id: "voice-general", name: "General Voice" },
+  { id: "voice-prayer", name: "Prayer Circle" },
+  { id: "voice-chill", name: "Chill Hangout" }
+];
+
+const rooms = new Map();
+// roomId -> { id,name,desc, users:Set, messages:[], typing:Set, voice:{ channels:[...], members: Map(channelId->Set(socketId)) } }
 for (const r of DEFAULT_ROOMS) {
-  rooms.set(r.id, { ...r, users: new Set(), messages: [], typing: new Set() });
+  const members = new Map();
+  for (const vc of DEFAULT_VOICE_CHANNELS) members.set(vc.id, new Set());
+  rooms.set(r.id, { ...r, users: new Set(), messages: [], typing: new Set(), voice: { channels: DEFAULT_VOICE_CHANNELS, members } });
 }
 
 function safeName(name) {
   const s = String(name || "").trim().slice(0, 24);
   return s.length ? s : `Guest${Math.floor(1000 + Math.random() * 9000)}`;
 }
-
 function makeId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -45,7 +51,8 @@ function roomSummary() {
     id: r.id,
     name: r.name,
     desc: r.desc,
-    online: r.users.size
+    online: r.users.size,
+    voiceCounts: r.voice.channels.map((c) => ({ id: c.id, count: r.voice.members.get(c.id)?.size || 0 }))
   }));
 }
 
@@ -55,17 +62,63 @@ function roster(roomId) {
   const list = [];
   for (const sid of r.users) {
     const s = io.sockets.sockets.get(sid);
-    if (s) list.push({ id: sid, name: s.data.name || "Guest", badge: s.data.badge || "Seeker" });
+    if (s) {
+      list.push({
+        id: sid,
+        name: s.data.name || "Guest",
+        badge: s.data.badge || "Seeker"
+      });
+    }
   }
-  // cute: alphabetical
   list.sort((a, b) => a.name.localeCompare(b.name));
   return list;
 }
 
-// ---------- Main chat namespace ----------
+function voiceParticipants(roomId, channelId) {
+  const r = rooms.get(roomId);
+  if (!r) return [];
+  const set = r.voice.members.get(channelId);
+  if (!set) return [];
+  const list = [];
+  for (const sid of set) {
+    const s = io.sockets.sockets.get(sid);
+    if (!s) continue;
+    list.push({
+      id: sid,
+      name: s.data.name || "Guest",
+      badge: s.data.badge || "Seeker",
+      muted: !!s.data.voiceMuted,
+      deafened: !!s.data.voiceDeafened,
+      speaking: !!s.data.voiceSpeaking
+    });
+  }
+  list.sort((a, b) => a.name.localeCompare(b.name));
+  return list;
+}
+
+function removeFromVoice(roomId, socketId) {
+  const r = rooms.get(roomId);
+  if (!r) return { removed: false, channelId: null };
+
+  let removedChannel = null;
+  for (const vc of r.voice.channels) {
+    const set = r.voice.members.get(vc.id);
+    if (set && set.has(socketId)) {
+      set.delete(socketId);
+      removedChannel = vc.id;
+    }
+  }
+  return { removed: !!removedChannel, channelId: removedChannel };
+}
+
+// ---------- Socket.io ----------
 io.on("connection", (socket) => {
   socket.data.name = "Guest";
   socket.data.badge = "Seeker";
+  socket.data.voiceChannelId = null;
+  socket.data.voiceMuted = false;
+  socket.data.voiceDeafened = false;
+  socket.data.voiceSpeaking = false;
 
   socket.on("session:hello", (payload = {}) => {
     socket.data.name = safeName(payload.name);
@@ -73,16 +126,22 @@ io.on("connection", (socket) => {
     socket.emit("lobby:rooms", roomSummary());
   });
 
-  socket.on("lobby:get", () => {
-    socket.emit("lobby:rooms", roomSummary());
-  });
+  socket.on("lobby:get", () => socket.emit("lobby:rooms", roomSummary()));
 
   socket.on("room:create", (payload = {}) => {
     const name = String(payload.name || "").trim().slice(0, 28);
     if (!name) return;
+    const id =
+      String(payload.id || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, "")
+        .slice(0, 18) || makeId().slice(0, 10);
 
-    const id = String(payload.id || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 18) || makeId().slice(0, 10);
     if (rooms.has(id)) return;
+
+    const members = new Map();
+    for (const vc of DEFAULT_VOICE_CHANNELS) members.set(vc.id, new Set());
 
     rooms.set(id, {
       id,
@@ -90,7 +149,8 @@ io.on("connection", (socket) => {
       desc: "A new sanctuary room.",
       users: new Set(),
       messages: [],
-      typing: new Set()
+      typing: new Set(),
+      voice: { channels: DEFAULT_VOICE_CHANNELS, members }
     });
 
     io.emit("lobby:rooms", roomSummary());
@@ -100,14 +160,24 @@ io.on("connection", (socket) => {
     const roomId = String(payload.roomId || "");
     if (!rooms.has(roomId)) return;
 
-    // leave any previous room
+    // leave any previous room(s)
     for (const [rid, r] of rooms.entries()) {
       if (r.users.has(socket.id)) {
         r.users.delete(socket.id);
         r.typing.delete(socket.id);
+
+        // also leave voice in that room
+        const { removed, channelId } = removeFromVoice(rid, socket.id);
+        if (removed && channelId) {
+          socket.to(rid).emit("voice:channel:participants", {
+            channelId,
+            participants: voiceParticipants(rid, channelId)
+          });
+          socket.to(rid).emit("voice:counts", roomSummary().find(x => x.id === rid)?.voiceCounts || []);
+        }
+
         socket.leave(rid);
         io.to(rid).emit("room:roster", roster(rid));
-        io.emit("lobby:rooms", roomSummary());
       }
     }
 
@@ -115,18 +185,21 @@ io.on("connection", (socket) => {
     r.users.add(socket.id);
     socket.join(roomId);
 
-    // system join msg
     io.to(roomId).emit("toast:system", {
       kind: "presence",
       title: "Joined sanctuary",
       message: `${socket.data.name} entered ${r.name}.`
     });
 
-    // send state
     socket.emit("room:state", {
       room: { id: r.id, name: r.name, desc: r.desc },
       roster: roster(roomId),
-      messages: r.messages.slice(-50)
+      messages: r.messages.slice(-60),
+      voiceChannels: r.voice.channels.map((c) => ({
+        id: c.id,
+        name: c.name,
+        count: r.voice.members.get(c.id)?.size || 0
+      }))
     });
 
     io.to(roomId).emit("room:roster", roster(roomId));
@@ -164,13 +237,12 @@ io.on("connection", (socket) => {
       user: { id: socket.id, name: socket.data.name, badge: socket.data.badge },
       text,
       ts: Date.now(),
-      reactions: {} // emoji -> { count, by:[socketId] }
+      reactions: {}
     };
 
     r.messages.push(msg);
-    if (r.messages.length > 300) r.messages.shift();
+    if (r.messages.length > 400) r.messages.shift();
 
-    // stop typing
     r.typing.delete(socket.id);
     socket.to(roomId).emit("typing:list", Array.from(r.typing).map((sid) => (io.sockets.sockets.get(sid)?.data?.name || "Guest")).slice(0, 4));
 
@@ -203,12 +275,140 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("message:reactions", { msgId, reactions: msg.reactions });
   });
 
+  // -------- Voice (WebRTC signaling) --------
+  socket.on("voice:join", (payload = {}) => {
+    const roomId = String(payload.roomId || "");
+    const channelId = String(payload.channelId || "");
+    const r = rooms.get(roomId);
+    if (!r || !r.users.has(socket.id)) return;
+    if (!r.voice.members.has(channelId)) return;
+
+    // leave previous voice in this room (or any old room just in case)
+    for (const [rid] of rooms.entries()) {
+      removeFromVoice(rid, socket.id);
+    }
+
+    const set = r.voice.members.get(channelId);
+    set.add(socket.id);
+
+    socket.data.voiceChannelId = channelId;
+    socket.data.voiceMuted = false;
+    socket.data.voiceDeafened = false;
+    socket.data.voiceSpeaking = false;
+
+    const peers = voiceParticipants(roomId, channelId).filter((p) => p.id !== socket.id);
+
+    socket.emit("voice:peers", {
+      roomId,
+      channelId,
+      peers
+    });
+
+    // tell others new peer arrived
+    socket.to(roomId).emit("voice:new-peer", {
+      roomId,
+      channelId,
+      peer: { id: socket.id, name: socket.data.name, badge: socket.data.badge, muted: false, deafened: false, speaking: false }
+    });
+
+    // update participants list + counts
+    io.to(roomId).emit("voice:channel:participants", {
+      channelId,
+      participants: voiceParticipants(roomId, channelId)
+    });
+    io.to(roomId).emit("voice:counts", roomSummary().find(x => x.id === roomId)?.voiceCounts || []);
+  });
+
+  socket.on("voice:leave", (payload = {}) => {
+    const roomId = String(payload.roomId || "");
+    const r = rooms.get(roomId);
+    if (!r) return;
+
+    const prev = socket.data.voiceChannelId;
+    const { removed } = removeFromVoice(roomId, socket.id);
+    socket.data.voiceChannelId = null;
+    socket.data.voiceMuted = false;
+    socket.data.voiceDeafened = false;
+    socket.data.voiceSpeaking = false;
+
+    if (removed && prev) {
+      socket.to(roomId).emit("voice:peer-left", { roomId, channelId: prev, id: socket.id });
+      io.to(roomId).emit("voice:channel:participants", { channelId: prev, participants: voiceParticipants(roomId, prev) });
+      io.to(roomId).emit("voice:counts", roomSummary().find(x => x.id === roomId)?.voiceCounts || []);
+    }
+  });
+
+  socket.on("voice:state", (payload = {}) => {
+    const roomId = String(payload.roomId || "");
+    const channelId = String(payload.channelId || socket.data.voiceChannelId || "");
+    const r = rooms.get(roomId);
+    if (!r || !channelId) return;
+    const set = r.voice.members.get(channelId);
+    if (!set || !set.has(socket.id)) return;
+
+    socket.data.voiceMuted = !!payload.muted;
+    socket.data.voiceDeafened = !!payload.deafened;
+
+    io.to(roomId).emit("voice:channel:participants", {
+      channelId,
+      participants: voiceParticipants(roomId, channelId)
+    });
+  });
+
+  socket.on("voice:speaking", (payload = {}) => {
+    const roomId = String(payload.roomId || "");
+    const channelId = String(payload.channelId || socket.data.voiceChannelId || "");
+    const speaking = !!payload.speaking;
+    const r = rooms.get(roomId);
+    if (!r || !channelId) return;
+    const set = r.voice.members.get(channelId);
+    if (!set || !set.has(socket.id)) return;
+
+    socket.data.voiceSpeaking = speaking;
+
+    // broadcast a lightweight event (UI glow)
+    socket.to(roomId).emit("voice:speaking", { id: socket.id, channelId, speaking });
+  });
+
+  // WebRTC relay: offer/answer/ice
+  socket.on("voice:signal", (payload = {}) => {
+    const to = String(payload.to || "");
+    const roomId = String(payload.roomId || "");
+    const channelId = String(payload.channelId || "");
+    const type = String(payload.type || "");
+    const data = payload.data;
+
+    const r = rooms.get(roomId);
+    if (!r) return;
+    const set = r.voice.members.get(channelId);
+    if (!set) return;
+
+    // only allow signaling if both are in same voice channel
+    if (!set.has(socket.id) || !set.has(to)) return;
+
+    io.to(to).emit("voice:signal", {
+      from: socket.id,
+      roomId,
+      channelId,
+      type,
+      data
+    });
+  });
+
   socket.on("disconnect", () => {
-    // remove from all rooms
+    // remove from all rooms and voice
     for (const [rid, r] of rooms.entries()) {
       if (r.users.has(socket.id)) {
         r.users.delete(socket.id);
         r.typing.delete(socket.id);
+
+        const prev = socket.data.voiceChannelId;
+        const { removed } = removeFromVoice(rid, socket.id);
+        if (removed && prev) {
+          socket.to(rid).emit("voice:peer-left", { roomId: rid, channelId: prev, id: socket.id });
+          io.to(rid).emit("voice:channel:participants", { channelId: prev, participants: voiceParticipants(rid, prev) });
+          io.to(rid).emit("voice:counts", roomSummary().find(x => x.id === rid)?.voiceCounts || []);
+        }
 
         io.to(rid).emit("toast:system", {
           kind: "presence",
@@ -220,82 +420,6 @@ io.on("connection", (socket) => {
       }
     }
     io.emit("lobby:rooms", roomSummary());
-  });
-});
-
-// ---------- Walk namespace (Phaser/canvas world) ----------
-const walk = io.of("/walk");
-const walkPlayers = new Map(); // socketId -> { id,name,x,y,vx,vy,ts }
-
-function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-
-walk.on("connection", (socket) => {
-  socket.data.name = "Guest";
-
-  socket.on("walk:join", (payload = {}) => {
-    socket.data.name = safeName(payload.name);
-
-    const spawn = {
-      id: socket.id,
-      name: socket.data.name,
-      x: 240 + Math.random() * 280,
-      y: 240 + Math.random() * 220,
-      ts: Date.now()
-    };
-    walkPlayers.set(socket.id, spawn);
-
-    socket.emit("walk:state:init", {
-      you: spawn,
-      players: Array.from(walkPlayers.values())
-    });
-
-    socket.broadcast.emit("walk:player:join", spawn);
-  });
-
-  socket.on("walk:pos", (payload = {}) => {
-    const p = walkPlayers.get(socket.id);
-    if (!p) return;
-    p.x = clamp(Number(payload.x) || p.x, 40, 1240);
-    p.y = clamp(Number(payload.y) || p.y, 40, 840);
-    p.ts = Date.now();
-    socket.broadcast.emit("walk:player:update", { id: socket.id, x: p.x, y: p.y, ts: p.ts });
-  });
-
-  // Proximity-based text chat: deliver only to players in radius
-  socket.on("walk:chat", (payload = {}) => {
-    const p = walkPlayers.get(socket.id);
-    if (!p) return;
-    const text = String(payload.text || "").trim().slice(0, 240);
-    if (!text) return;
-
-    const radius = 180; // pixels
-    const msg = {
-      id: makeId(),
-      from: { id: socket.id, name: p.name },
-      text,
-      x: p.x,
-      y: p.y,
-      ts: Date.now(),
-      radius
-    };
-
-    // send to self + nearby
-    socket.emit("walk:chat:recv", msg);
-
-    for (const [sid, other] of walkPlayers.entries()) {
-      if (sid === socket.id) continue;
-      const dx = other.x - p.x;
-      const dy = other.y - p.y;
-      if (Math.hypot(dx, dy) <= radius) {
-        walk.to(sid).emit("walk:chat:recv", msg);
-      }
-    }
-  });
-
-  socket.on("disconnect", () => {
-    const p = walkPlayers.get(socket.id);
-    walkPlayers.delete(socket.id);
-    if (p) socket.broadcast.emit("walk:player:leave", { id: socket.id });
   });
 });
 
