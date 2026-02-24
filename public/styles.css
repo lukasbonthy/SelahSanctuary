@@ -1,0 +1,127 @@
+:root{
+  --glass: rgba(255,255,255,.10);
+  --glass2: rgba(255,255,255,.07);
+  --stroke: rgba(255,255,255,.18);
+  --shadow: 0 20px 80px rgba(0,0,0,.35);
+  --glow: 0 0 0 1px rgba(255,255,255,.08), 0 30px 120px rgba(125, 211, 252, .14);
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+html,body { height:100%; }
+
+body{
+  background:
+    radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,.24), transparent 60%),
+    radial-gradient(900px 600px at 85% 15%, rgba(244,114,182,.18), transparent 60%),
+    radial-gradient(1000px 700px at 50% 95%, rgba(167,139,250,.20), transparent 62%),
+    linear-gradient(180deg, #050713 0%, #070a18 55%, #04060f 100%);
+  color: rgba(255,255,255,.92);
+  overflow-x: hidden;
+}
+
+/* Glass card helpers */
+.glass{
+  background: var(--glass);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.glass-soft{
+  background: var(--glass2);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.glow-ring{
+  box-shadow: var(--glow);
+}
+
+.noise::before{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 0);
+  background-size: 18px 18px;
+  opacity: .07;
+  mix-blend-mode: overlay;
+  border-radius: inherit;
+}
+
+/* Shimmer button */
+.shimmer{
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after{
+  content:"";
+  position:absolute; inset:-40%;
+  background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.22) 48%, transparent 62%);
+  transform: translateX(-60%) rotate(8deg);
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+@keyframes shimmer{
+  0% { transform: translateX(-70%) rotate(8deg); opacity:.0; }
+  20% { opacity:.25; }
+  50% { opacity:.35; }
+  100% { transform: translateX(70%) rotate(8deg); opacity:0; }
+}
+
+/* Floating glow blobs */
+@keyframes floaty {
+  0%{ transform: translateY(0px) scale(1); filter: blur(0px); }
+  50%{ transform: translateY(-10px) scale(1.03); filter: blur(.3px); }
+  100%{ transform: translateY(0px) scale(1); filter: blur(0px); }
+}
+.floaty { animation: floaty 8s ease-in-out infinite; }
+
+/* Microinteraction */
+.pressy{
+  transition: transform .12s ease, filter .12s ease, box-shadow .18s ease;
+}
+.pressy:active{ transform: scale(.985); }
+
+/* Smooth scrollbars (desktop) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,.06); border-radius: 999px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.26); }
+
+/* Toast stack */
+.toast-stack{
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 60;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(420px, calc(100vw - 36px));
+}
+.toast{
+  transform: translateY(-6px);
+  opacity: 0;
+  animation: toast-in .25s ease forwards;
+}
+@keyframes toast-in{
+  to{ transform: translateY(0); opacity:1; }
+}
+@keyframes toast-out{
+  to{ transform: translateY(-6px); opacity:0; }
+}
+
+/* Tiny neon divider */
+.neon-divider{
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(125,211,252,.35), rgba(244,114,182,.25), transparent);
+}
+
+/* Chat reaction pill */
+.reaction-pill{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
