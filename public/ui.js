@@ -35,21 +35,12 @@ Selah.toast = (opts = {}) => {
     <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-sky-400/50 via-fuchsia-400/40 to-violet-400/40"></div>
   `;
 
-  const closeBtn = t.querySelector("button");
   const remove = () => {
     t.style.animation = "toast-out .22s ease forwards";
     setTimeout(() => t.remove(), 220);
   };
-  closeBtn.addEventListener("click", remove);
+  t.querySelector("button").addEventListener("click", remove);
 
   stack.appendChild(t);
   setTimeout(remove, opts.duration ?? 3200);
-};
-
-Selah.pulse = (el) => {
-  if (!el) return;
-  el.animate(
-    [{ transform: "scale(1)" }, { transform: "scale(1.02)" }, { transform: "scale(1)" }],
-    { duration: 420, easing: "cubic-bezier(.2,.8,.2,1)" }
-  );
 };
