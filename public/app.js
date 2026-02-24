@@ -2,14 +2,10 @@ window.Selah = window.Selah || {};
 
 Selah.session = {
   get() {
-    try {
-      const raw = localStorage.getItem("selah_session");
-      return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
+    try { return JSON.parse(localStorage.getItem("selah_session") || "null"); }
+    catch { return null; }
   },
-  set(data) {
-    localStorage.setItem("selah_session", JSON.stringify(data));
-  },
+  set(data) { localStorage.setItem("selah_session", JSON.stringify(data)); },
   ensure() {
     const s = Selah.session.get();
     if (s && s.name) return s;
@@ -33,3 +29,11 @@ Selah.timeAgo = (ts) => {
 
 Selah.escape = (str) =>
   String(str).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[c]));
+
+Selah.pulse = (el) => {
+  if (!el) return;
+  el.animate(
+    [{ transform: "scale(1)" }, { transform: "scale(1.02)" }, { transform: "scale(1)" }],
+    { duration: 420, easing: "cubic-bezier(.2,.8,.2,1)" }
+  );
+};
