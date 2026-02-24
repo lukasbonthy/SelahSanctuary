@@ -10,12 +10,12 @@
 
   socket.emit("session:hello", s);
 
-  socket.on("lobby:rooms", (rooms) => {
-    renderRooms(rooms);
-  });
+  socket.on("lobby:rooms", (rooms) => renderRooms(rooms));
 
   function roomCard(r) {
     const online = r.online ?? 0;
+    const vc = (r.voiceCounts || []).reduce((a, x) => a + (x.count || 0), 0);
+
     return `
       <a href="/chat?room=${encodeURIComponent(r.id)}"
          class="group pressy block rounded-3xl p-4 glass-soft border border-white/12 hover:border-white/18 transition relative overflow-hidden">
@@ -34,8 +34,9 @@
               <span class="text-white/55">online</span>
             </div>
           </div>
-          <div class="mt-4 flex items-center justify-between">
-            <div class="text-xs text-white/55">Tap to enter</div>
+
+          <div class="mt-3 flex items-center justify-between">
+            <div class="text-xs text-white/55">🎧 in voice: <span class="text-white/80">${vc}</span></div>
             <div class="text-sm text-white/75 group-hover:text-white transition">→</div>
           </div>
         </div>
@@ -50,15 +51,11 @@
 
   document.getElementById("createRoom").addEventListener("click", () => {
     const name = document.getElementById("newRoomName").value.trim();
-    if (!name) {
-      Selah.toast({ kind: "danger", title: "Room name needed", message: "Type a room name first." });
-      return;
-    }
+    if (!name) return Selah.toast({ kind: "danger", title: "Room name needed", message: "Type a room name first." });
     socket.emit("room:create", { name });
     document.getElementById("newRoomName").value = "";
     Selah.toast({ kind: "success", title: "Room created", message: "If it’s new, it’ll appear instantly." });
   });
 
-  // subtle refresh loop
   setInterval(() => socket.emit("lobby:get"), 4000);
 })();
