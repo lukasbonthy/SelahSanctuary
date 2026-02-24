@@ -1,127 +1,170 @@
-:root{
-  --glass: rgba(255,255,255,.10);
-  --glass2: rgba(255,255,255,.07);
-  --stroke: rgba(255,255,255,.18);
-  --shadow: 0 20px 80px rgba(0,0,0,.35);
-  --glow: 0 0 0 1px rgba(255,255,255,.08), 0 30px 120px rgba(125, 211, 252, .14);
-}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selah Sanctuary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="min-h-screen">
+  <div class="absolute inset-0 pointer-events-none opacity-50">
+    <div class="absolute -top-24 -left-24 w-[520px] h-[520px] rounded-full bg-sky-400/20 blur-3xl floaty"></div>
+    <div class="absolute top-12 right-[-140px] w-[520px] h-[520px] rounded-full bg-fuchsia-400/15 blur-3xl floaty" style="animation-delay:-2.4s"></div>
+    <div class="absolute bottom-[-220px] left-[20%] w-[720px] h-[720px] rounded-full bg-violet-400/15 blur-3xl floaty" style="animation-delay:-4.3s"></div>
+  </div>
 
-* { -webkit-tap-highlight-color: transparent; }
-html,body { height:100%; }
+  <header class="relative z-10 px-5 sm:px-8 pt-6">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <a class="flex items-center gap-3 group" href="/">
+        <div class="w-11 h-11 rounded-2xl glass glow-ring grid place-items-center noise relative overflow-hidden">
+          <div class="w-7 h-7 rounded-xl bg-gradient-to-br from-sky-300 via-fuchsia-300 to-violet-300 blur-[0px]"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+        </div>
+        <div class="leading-tight">
+          <div class="font-semibold tracking-tight">Selah Sanctuary</div>
+          <div class="text-xs text-white/60">glass • calm • community</div>
+        </div>
+      </a>
 
-body{
-  background:
-    radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,.24), transparent 60%),
-    radial-gradient(900px 600px at 85% 15%, rgba(244,114,182,.18), transparent 60%),
-    radial-gradient(1000px 700px at 50% 95%, rgba(167,139,250,.20), transparent 62%),
-    linear-gradient(180deg, #050713 0%, #070a18 55%, #04060f 100%);
-  color: rgba(255,255,255,.92);
-  overflow-x: hidden;
-}
+      <nav class="hidden md:flex items-center gap-2">
+        <a class="px-4 py-2 rounded-2xl text-white/70 hover:text-white hover:bg-white/5 transition" href="/lobby">Lobby</a>
+        <a class="px-4 py-2 rounded-2xl text-white/70 hover:text-white hover:bg-white/5 transition" href="/walk">Sanctuary Walk</a>
+        <a class="px-4 py-2 rounded-2xl text-white/70 hover:text-white hover:bg-white/5 transition" href="/login">Login</a>
+        <a class="px-4 py-2 rounded-2xl glass-soft glow-ring shimmer pressy rounded-2xl font-semibold" href="/login">Enter</a>
+      </nav>
 
-/* Glass card helpers */
-.glass{
-  background: var(--glass);
-  border: 1px solid var(--stroke);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-.glass-soft{
-  background: var(--glass2);
-  border: 1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
+      <a class="md:hidden px-4 py-2 rounded-2xl glass-soft glow-ring shimmer pressy font-semibold" href="/login">Enter</a>
+    </div>
+  </header>
 
-.glow-ring{
-  box-shadow: var(--glow);
-}
+  <main class="relative z-10 px-5 sm:px-8 pt-10 pb-14">
+    <section class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
+      <div class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-soft">
+          <span class="text-sm text-white/80">✨ premium glass UI</span>
+          <span class="w-1 h-1 rounded-full bg-white/40"></span>
+          <span class="text-sm text-white/70">Socket.io realtime</span>
+        </div>
 
-.noise::before{
-  content:"";
-  position:absolute; inset:0;
-  pointer-events:none;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 0);
-  background-size: 18px 18px;
-  opacity: .07;
-  mix-blend-mode: overlay;
-  border-radius: inherit;
-}
+        <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.05]">
+          A calm place to talk.
+          <span class="bg-gradient-to-r from-sky-300 via-fuchsia-300 to-violet-300 bg-clip-text text-transparent">
+            Together.
+          </span>
+        </h1>
 
-/* Shimmer button */
-.shimmer{
-  position: relative;
-  overflow: hidden;
-}
-.shimmer::after{
-  content:"";
-  position:absolute; inset:-40%;
-  background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.22) 48%, transparent 62%);
-  transform: translateX(-60%) rotate(8deg);
-  animation: shimmer 2.4s ease-in-out infinite;
-}
-@keyframes shimmer{
-  0% { transform: translateX(-70%) rotate(8deg); opacity:.0; }
-  20% { opacity:.25; }
-  50% { opacity:.35; }
-  100% { transform: translateX(70%) rotate(8deg); opacity:0; }
-}
+        <p class="text-white/70 text-lg leading-relaxed max-w-xl">
+          Selah Sanctuary blends a Discord-like layout with a modern startup landing vibe —
+          glass panels, shimmer buttons, soft glow, and smooth microinteractions.
+        </p>
 
-/* Floating glow blobs */
-@keyframes floaty {
-  0%{ transform: translateY(0px) scale(1); filter: blur(0px); }
-  50%{ transform: translateY(-10px) scale(1.03); filter: blur(.3px); }
-  100%{ transform: translateY(0px) scale(1); filter: blur(0px); }
-}
-.floaty { animation: floaty 8s ease-in-out infinite; }
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="/login" class="glass-soft glow-ring shimmer pressy rounded-3xl px-6 py-4 font-semibold inline-flex items-center justify-center gap-2">
+            Enter Sanctuary <span class="opacity-80">→</span>
+          </a>
+          <a href="/walk" class="pressy rounded-3xl px-6 py-4 font-semibold bg-white/5 hover:bg-white/8 border border-white/10 transition inline-flex items-center justify-center gap-2">
+            Explore “Sanctuary Walk” <span class="opacity-80">⌁</span>
+          </a>
+        </div>
 
-/* Microinteraction */
-.pressy{
-  transition: transform .12s ease, filter .12s ease, box-shadow .18s ease;
-}
-.pressy:active{ transform: scale(.985); }
+        <div class="neon-divider w-full max-w-xl"></div>
 
-/* Smooth scrollbars (desktop) */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: rgba(255,255,255,.06); border-radius: 999px; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.26); }
+        <div class="grid sm:grid-cols-3 gap-3 max-w-xl">
+          <div class="glass-soft rounded-3xl p-4 noise relative overflow-hidden">
+            <div class="text-white/90 font-semibold">Reactions</div>
+            <div class="text-sm text-white/65 mt-1">Tap emojis on messages.</div>
+          </div>
+          <div class="glass-soft rounded-3xl p-4 noise relative overflow-hidden">
+            <div class="text-white/90 font-semibold">Typing</div>
+            <div class="text-sm text-white/65 mt-1">Live “typing…” hints.</div>
+          </div>
+          <div class="glass-soft rounded-3xl p-4 noise relative overflow-hidden">
+            <div class="text-white/90 font-semibold">Toasts</div>
+            <div class="text-sm text-white/65 mt-1">Sleek notifications.</div>
+          </div>
+        </div>
+      </div>
 
-/* Toast stack */
-.toast-stack{
-  position: fixed;
-  top: 18px;
-  right: 18px;
-  z-index: 60;
-  display:flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: min(420px, calc(100vw - 36px));
-}
-.toast{
-  transform: translateY(-6px);
-  opacity: 0;
-  animation: toast-in .25s ease forwards;
-}
-@keyframes toast-in{
-  to{ transform: translateY(0); opacity:1; }
-}
-@keyframes toast-out{
-  to{ transform: translateY(-6px); opacity:0; }
-}
+      <!-- Right: premium preview mock -->
+      <div class="glass rounded-3xl p-5 sm:p-6 noise relative overflow-hidden glow-ring">
+        <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sky-400/15 blur-3xl"></div>
+        <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-fuchsia-400/12 blur-3xl"></div>
 
-/* Tiny neon divider */
-.neon-divider{
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(125,211,252,.35), rgba(244,114,182,.25), transparent);
-}
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-semibold tracking-tight">Live Preview</div>
+            <div class="text-sm text-white/60">Lobby + chat layout feel</div>
+          </div>
+          <div class="flex gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-emerald-400/70"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-amber-400/70"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-rose-400/70"></div>
+          </div>
+        </div>
 
-/* Chat reaction pill */
-.reaction-pill{
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
+        <div class="mt-5 grid grid-cols-12 gap-3">
+          <div class="col-span-4 glass-soft rounded-3xl p-4">
+            <div class="text-xs text-white/55">Rooms</div>
+            <div class="mt-3 space-y-2">
+              <div class="px-3 py-2 rounded-2xl bg-white/6 border border-white/10">🔥 Fireside</div>
+              <div class="px-3 py-2 rounded-2xl bg-white/4 border border-white/10 text-white/70">🌿 Garden</div>
+              <div class="px-3 py-2 rounded-2xl bg-white/4 border border-white/10 text-white/70">📖 Study</div>
+            </div>
+          </div>
+          <div class="col-span-8 glass-soft rounded-3xl p-4">
+            <div class="flex items-center justify-between">
+              <div class="text-xs text-white/55">Chat</div>
+              <div class="text-xs text-white/55">Now Talking • UI only</div>
+            </div>
+
+            <div class="mt-3 space-y-3">
+              <div class="flex gap-3 items-start">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-300/70 to-violet-300/60"></div>
+                <div class="max-w-[80%]">
+                  <div class="text-sm font-semibold">Ava <span class="text-xs text-white/50 font-normal">• 1m</span></div>
+                  <div class="mt-1 px-4 py-3 rounded-3xl bg-white/6 border border-white/10">
+                    hey, welcome to selah ✨
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-3 items-start justify-end">
+                <div class="max-w-[80%] text-right">
+                  <div class="text-sm font-semibold">You <span class="text-xs text-white/50 font-normal">• now</span></div>
+                  <div class="mt-1 inline-block px-4 py-3 rounded-3xl bg-gradient-to-br from-sky-400/25 via-fuchsia-400/20 to-violet-400/20 border border-white/12">
+                    this UI is crazy clean 🙏
+                  </div>
+                </div>
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-fuchsia-300/70 to-sky-300/60"></div>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center gap-2">
+              <div class="flex-1 rounded-3xl bg-white/5 border border-white/10 px-4 py-3 text-white/50 text-sm">
+                Type a message…
+              </div>
+              <div class="rounded-3xl px-4 py-3 glass-soft shimmer pressy font-semibold">Send</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 text-sm text-white/60">
+          Ready? Jump in with a guest name and start chatting.
+        </div>
+      </div>
+    </section>
+
+    <footer class="max-w-6xl mx-auto mt-14 text-white/55 text-sm">
+      <div class="neon-divider mb-6"></div>
+      <div class="flex flex-col sm:flex-row justify-between gap-3">
+        <div>© <span id="y"></span> Selah Sanctuary</div>
+        <div class="text-white/45">Built with Express + Socket.io + Tailwind</div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
