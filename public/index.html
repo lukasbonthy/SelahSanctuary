@@ -16,20 +16,19 @@
 
   <header class="relative z-10 px-5 sm:px-8 pt-6">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
-      <a class="flex items-center gap-3 group" href="/">
+      <a class="flex items-center gap-3" href="/">
         <div class="w-11 h-11 rounded-2xl glass glow-ring grid place-items-center noise relative overflow-hidden">
-          <div class="w-7 h-7 rounded-xl bg-gradient-to-br from-sky-300 via-fuchsia-300 to-violet-300 blur-[0px]"></div>
+          <div class="w-7 h-7 rounded-xl bg-gradient-to-br from-sky-300 via-fuchsia-300 to-violet-300"></div>
           <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
         </div>
         <div class="leading-tight">
           <div class="font-semibold tracking-tight">Selah Sanctuary</div>
-          <div class="text-xs text-white/60">glass • calm • community</div>
+          <div class="text-xs text-white/60">text + voice • glass UI</div>
         </div>
       </a>
 
       <nav class="hidden md:flex items-center gap-2">
         <a class="px-4 py-2 rounded-2xl text-white/70 hover:text-white hover:bg-white/5 transition" href="/lobby">Lobby</a>
-        <a class="px-4 py-2 rounded-2xl text-white/70 hover:text-white hover:bg-white/5 transition" href="/walk">Sanctuary Walk</a>
         <a class="px-4 py-2 rounded-2xl text-white/70 hover:text-white hover:bg-white/5 transition" href="/login">Login</a>
         <a class="px-4 py-2 rounded-2xl glass-soft glow-ring shimmer pressy rounded-2xl font-semibold" href="/login">Enter</a>
       </nav>
@@ -42,29 +41,29 @@
     <section class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
       <div class="space-y-6">
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-soft">
-          <span class="text-sm text-white/80">✨ premium glass UI</span>
+          <span class="text-sm text-white/80">🎧 real voice chat</span>
           <span class="w-1 h-1 rounded-full bg-white/40"></span>
-          <span class="text-sm text-white/70">Socket.io realtime</span>
+          <span class="text-sm text-white/70">Discord-like layout</span>
         </div>
 
         <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.05]">
-          A calm place to talk.
+          A calm place to talk —
           <span class="bg-gradient-to-r from-sky-300 via-fuchsia-300 to-violet-300 bg-clip-text text-transparent">
-            Together.
+            with voice.
           </span>
         </h1>
 
         <p class="text-white/70 text-lg leading-relaxed max-w-xl">
-          Selah Sanctuary blends a Discord-like layout with a modern startup landing vibe —
-          glass panels, shimmer buttons, soft glow, and smooth microinteractions.
+          Glass panels, shimmer buttons, smooth microinteractions, live typing, reactions,
+          and WebRTC voice channels — built with Express + Socket.io.
         </p>
 
         <div class="flex flex-col sm:flex-row gap-3">
           <a href="/login" class="glass-soft glow-ring shimmer pressy rounded-3xl px-6 py-4 font-semibold inline-flex items-center justify-center gap-2">
             Enter Sanctuary <span class="opacity-80">→</span>
           </a>
-          <a href="/walk" class="pressy rounded-3xl px-6 py-4 font-semibold bg-white/5 hover:bg-white/8 border border-white/10 transition inline-flex items-center justify-center gap-2">
-            Explore “Sanctuary Walk” <span class="opacity-80">⌁</span>
+          <a href="/lobby" class="pressy rounded-3xl px-6 py-4 font-semibold bg-white/5 hover:bg-white/8 border border-white/10 transition inline-flex items-center justify-center gap-2">
+            Browse Rooms <span class="opacity-80">⌁</span>
           </a>
         </div>
 
@@ -72,29 +71,28 @@
 
         <div class="grid sm:grid-cols-3 gap-3 max-w-xl">
           <div class="glass-soft rounded-3xl p-4 noise relative overflow-hidden">
+            <div class="text-white/90 font-semibold">Voice Channels</div>
+            <div class="text-sm text-white/65 mt-1">Join, mute, deafen.</div>
+          </div>
+          <div class="glass-soft rounded-3xl p-4 noise relative overflow-hidden">
+            <div class="text-white/90 font-semibold">Speaking Glow</div>
+            <div class="text-sm text-white/65 mt-1">Live indicator UI.</div>
+          </div>
+          <div class="glass-soft rounded-3xl p-4 noise relative overflow-hidden">
             <div class="text-white/90 font-semibold">Reactions</div>
             <div class="text-sm text-white/65 mt-1">Tap emojis on messages.</div>
-          </div>
-          <div class="glass-soft rounded-3xl p-4 noise relative overflow-hidden">
-            <div class="text-white/90 font-semibold">Typing</div>
-            <div class="text-sm text-white/65 mt-1">Live “typing…” hints.</div>
-          </div>
-          <div class="glass-soft rounded-3xl p-4 noise relative overflow-hidden">
-            <div class="text-white/90 font-semibold">Toasts</div>
-            <div class="text-sm text-white/65 mt-1">Sleek notifications.</div>
           </div>
         </div>
       </div>
 
-      <!-- Right: premium preview mock -->
       <div class="glass rounded-3xl p-5 sm:p-6 noise relative overflow-hidden glow-ring">
         <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sky-400/15 blur-3xl"></div>
         <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-fuchsia-400/12 blur-3xl"></div>
 
         <div class="flex items-center justify-between">
           <div>
-            <div class="font-semibold tracking-tight">Live Preview</div>
-            <div class="text-sm text-white/60">Lobby + chat layout feel</div>
+            <div class="font-semibold tracking-tight">Discord-like layout</div>
+            <div class="text-sm text-white/60">Channels + chat + voice panel</div>
           </div>
           <div class="flex gap-2">
             <div class="w-2.5 h-2.5 rounded-full bg-emerald-400/70"></div>
@@ -105,26 +103,32 @@
 
         <div class="mt-5 grid grid-cols-12 gap-3">
           <div class="col-span-4 glass-soft rounded-3xl p-4">
-            <div class="text-xs text-white/55">Rooms</div>
+            <div class="text-xs text-white/55">Voice</div>
             <div class="mt-3 space-y-2">
-              <div class="px-3 py-2 rounded-2xl bg-white/6 border border-white/10">🔥 Fireside</div>
-              <div class="px-3 py-2 rounded-2xl bg-white/4 border border-white/10 text-white/70">🌿 Garden</div>
-              <div class="px-3 py-2 rounded-2xl bg-white/4 border border-white/10 text-white/70">📖 Study</div>
+              <div class="px-3 py-2 rounded-2xl bg-white/6 border border-white/10">🎙 General Voice</div>
+              <div class="px-3 py-2 rounded-2xl bg-white/4 border border-white/10 text-white/70">🙏 Prayer Circle</div>
+            </div>
+            <div class="mt-4 glass-soft rounded-3xl p-3">
+              <div class="text-xs text-white/55">Controls</div>
+              <div class="mt-2 flex gap-2">
+                <div class="px-2 py-1 rounded-xl bg-white/6 border border-white/10 text-xs">Mute</div>
+                <div class="px-2 py-1 rounded-xl bg-white/6 border border-white/10 text-xs">Deafen</div>
+              </div>
             </div>
           </div>
+
           <div class="col-span-8 glass-soft rounded-3xl p-4">
             <div class="flex items-center justify-between">
               <div class="text-xs text-white/55">Chat</div>
-              <div class="text-xs text-white/55">Now Talking • UI only</div>
+              <div class="text-xs text-white/55">Typing • reactions • toasts</div>
             </div>
-
             <div class="mt-3 space-y-3">
               <div class="flex gap-3 items-start">
                 <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-300/70 to-violet-300/60"></div>
                 <div class="max-w-[80%]">
                   <div class="text-sm font-semibold">Ava <span class="text-xs text-white/50 font-normal">• 1m</span></div>
                   <div class="mt-1 px-4 py-3 rounded-3xl bg-white/6 border border-white/10">
-                    hey, welcome to selah ✨
+                    join voice when you want 🎧
                   </div>
                 </div>
               </div>
@@ -132,24 +136,17 @@
                 <div class="max-w-[80%] text-right">
                   <div class="text-sm font-semibold">You <span class="text-xs text-white/50 font-normal">• now</span></div>
                   <div class="mt-1 inline-block px-4 py-3 rounded-3xl bg-gradient-to-br from-sky-400/25 via-fuchsia-400/20 to-violet-400/20 border border-white/12">
-                    this UI is crazy clean 🙏
+                    bet. this looks like discord but premium ✨
                   </div>
                 </div>
                 <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-fuchsia-300/70 to-sky-300/60"></div>
               </div>
             </div>
-
-            <div class="mt-4 flex items-center gap-2">
-              <div class="flex-1 rounded-3xl bg-white/5 border border-white/10 px-4 py-3 text-white/50 text-sm">
-                Type a message…
-              </div>
-              <div class="rounded-3xl px-4 py-3 glass-soft shimmer pressy font-semibold">Send</div>
-            </div>
           </div>
         </div>
 
         <div class="mt-5 text-sm text-white/60">
-          Ready? Jump in with a guest name and start chatting.
+          Ready? Join with a name and hop in.
         </div>
       </div>
     </section>
@@ -158,13 +155,11 @@
       <div class="neon-divider mb-6"></div>
       <div class="flex flex-col sm:flex-row justify-between gap-3">
         <div>© <span id="y"></span> Selah Sanctuary</div>
-        <div class="text-white/45">Built with Express + Socket.io + Tailwind</div>
+        <div class="text-white/45">Express + Socket.io + WebRTC Voice</div>
       </div>
     </footer>
   </main>
 
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
 </body>
 </html>
