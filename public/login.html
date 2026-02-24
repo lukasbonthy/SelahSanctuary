@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login • Selah Sanctuary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="min-h-screen">
+  <div class="px-5 sm:px-8 pt-8 pb-14 relative">
+    <div class="max-w-5xl mx-auto">
+      <a href="/" class="inline-flex items-center gap-2 text-white/70 hover:text-white transition">
+        <span class="opacity-80">←</span> Back
+      </a>
+
+      <div class="mt-6 grid lg:grid-cols-2 gap-6 items-stretch">
+        <div class="glass rounded-3xl p-6 sm:p-8 noise relative overflow-hidden glow-ring">
+          <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sky-400/12 blur-3xl"></div>
+
+          <h1 class="text-3xl font-semibold tracking-tight">Enter Selah Sanctuary</h1>
+          <p class="text-white/70 mt-2">
+            Choose a name, pick a vibe badge, and step in. (Guest join is the default.)
+          </p>
+
+          <div class="mt-6 space-y-4">
+            <div>
+              <label class="text-sm text-white/70">Display name</label>
+              <input id="name" class="mt-2 w-full rounded-3xl bg-white/5 border border-white/12 px-4 py-4 outline-none focus:ring-2 focus:ring-sky-400/40 transition"
+                placeholder="e.g., Lukas, Ava, Zion…" maxlength="24" />
+            </div>
+
+            <div>
+              <label class="text-sm text-white/70">Badge</label>
+              <div class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2" id="badges">
+                <!-- injected -->
+              </div>
+            </div>
+
+            <div class="neon-divider"></div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button id="enter" class="flex-1 glass-soft glow-ring shimmer pressy rounded-3xl px-6 py-4 font-semibold">
+                Join as Guest
+              </button>
+              <a href="/walk" class="flex-1 pressy rounded-3xl px-6 py-4 font-semibold bg-white/5 hover:bg-white/8 border border-white/10 transition text-center">
+                Sanctuary Walk
+              </a>
+            </div>
+
+            <p class="text-xs text-white/45">
+              Tip: your name is stored locally in your browser for quick re-joins.
+            </p>
+          </div>
+        </div>
+
+        <div class="glass rounded-3xl p-6 sm:p-8 noise relative overflow-hidden">
+          <div class="absolute -bottom-28 -left-24 w-80 h-80 rounded-full bg-fuchsia-400/10 blur-3xl"></div>
+
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-sm text-white/60">Your card</div>
+              <div class="mt-2 text-2xl font-semibold tracking-tight" id="previewName">Guest</div>
+              <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/6 border border-white/12 text-sm" id="previewBadge">
+                ✨ Seeker
+              </div>
+            </div>
+            <div class="w-14 h-14 rounded-3xl bg-gradient-to-br from-sky-300/70 via-fuchsia-300/60 to-violet-300/70 glow-ring"></div>
+          </div>
+
+          <div class="mt-6 glass-soft rounded-3xl p-5">
+            <div class="text-sm font-semibold">What you’ll see inside</div>
+            <ul class="mt-3 text-sm text-white/70 space-y-2">
+              <li>• A premium lobby with room cards + live online counts.</li>
+              <li>• Glass chat with typing indicator, reactions, and toasts.</li>
+              <li>• “Now Talking” panel (UI only) like a voice corner.</li>
+              <li>• A 2D “Sanctuary Walk” with proximity chat zones.</li>
+            </ul>
+          </div>
+
+          <div class="mt-6 text-sm text-white/60">
+            Ready when you are. Press <span class="px-2 py-1 rounded-lg bg-white/6 border border-white/10">Enter</span>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+  <script src="/ui.js"></script>
+  <script>
+    const badgeOptions = ["Seeker", "Helper", "Builder", "Peacekeeper", "Listener", "Lightbearer", "Worshipper", "Guardian"];
+    const badgesEl = document.getElementById("badges");
+    const nameEl = document.getElementById("name");
+    const previewName = document.getElementById("previewName");
+    const previewBadge = document.getElementById("previewBadge");
+
+    const s = Selah.session.ensure();
+    nameEl.value = s.name || "";
+
+    let chosenBadge = s.badge || "Seeker";
+
+    function renderBadges() {
+      badgesEl.innerHTML = "";
+      badgeOptions.forEach((b) => {
+        const btn = document.createElement("button");
+        const active = b === chosenBadge;
+        btn.className = [
+          "pressy rounded-2xl px-3 py-2 text-sm border transition",
+          active ? "bg-white/10 border-white/20 text-white glow-ring" : "bg-white/5 border-white/10 text-white/75 hover:bg-white/8 hover:text-white"
+        ].join(" ");
+        btn.textContent = b;
+        btn.addEventListener("click", () => {
+          chosenBadge = b;
+          previewBadge.textContent = "✨ " + chosenBadge;
+          renderBadges();
+          Selah.pulse(previewBadge);
+        });
+        badgesEl.appendChild(btn);
+      });
+    }
+
+    function syncPreview() {
+      const nm = (nameEl.value || "").trim().slice(0, 24);
+      previewName.textContent = nm.length ? nm : "Guest";
+      previewBadge.textContent = "✨ " + chosenBadge;
+    }
+
+    renderBadges();
+    syncPreview();
+
+    nameEl.addEventListener("input", syncPreview);
+
+    document.getElementById("enter").addEventListener("click", () => {
+      const nm = (nameEl.value || "").trim().slice(0, 24);
+      const payload = { name: nm.length ? nm : s.name, badge: chosenBadge };
+      Selah.session.set(payload);
+      Selah.toast({ kind: "success", title: "Welcome", message: "Entering the lobby…" });
+      setTimeout(() => location.href = "/lobby", 220);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") document.getElementById("enter").click();
+    });
+  </script>
+</body>
+</html>
