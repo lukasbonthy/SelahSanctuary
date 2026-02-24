@@ -1,11 +1,14 @@
 {
   "name": "selah-sanctuary",
-  "version": "1.0.0",
-  "description": "Selah Sanctuary — modern glassmorphism chat + walk (Express + Socket.io + Tailwind CDN)",
+  "version": "2.0.0",
+  "description": "Selah Sanctuary — Discord-like glass chat + real voice (Express + Socket.io + WebRTC)",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
     "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "express": "^4.19.2",
